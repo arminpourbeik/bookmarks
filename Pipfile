@@ -5,8 +5,14 @@ name = "pypi"
 
 [packages]
 django = "*"
+python-decouple = "*"
+pillow = "*"
+django-extensions = "*"
+werkzeug = "*"
+pyopenssl = "*"
 
 [dev-packages]
+django-extensions = "*"
 
 [requires]
 python_version = "3.9"
