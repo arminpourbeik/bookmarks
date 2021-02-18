@@ -1,0 +1,43 @@
+
+body {
+    margin:0;
+    padding:0;
+    font-family:helvetica, sans-serif;
+}
+
+p {
+    line-height: 1.8;
+}
+
+a {
+    color:#12c064;
+    text-decoration:none;
+}
+
+a:hover {
+    color:#00a74f;
+}
+
+h1, h2, h3, h4, h5 , h6 { font-family: 'Muli', sans-serif; font-weight:normal; }
+
+h1 {
+    border-bottom:1px solid #bbb;
+    padding:0 0 10px 0;
+    margin:10px 0 20px 0;
+}
+
+h2 {
+    margin:30px 0 20px;
+}
+
+ol {
+    line-height:1.5;
+}
+
+#content {
+    padding:30px 100px;
+}
+
+@import "header";
+@import "forms";
+@import "messages";

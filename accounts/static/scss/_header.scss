@@ -1,0 +1,41 @@
+#header {
+  padding: 10px 100px;
+  font-size: 14px;
+  background: #12c064;
+  color: #fff;
+  border-bottom: 4px solid #1cdf78;
+  overflow: auto;
+
+  .logo {
+    font-family: 'Muli', sans-serif;
+    float: left;
+    color: #f3f7cc;
+    font-size: 20px;
+    margin-right: 10%;
+  }
+
+  ul.menu {
+    list-style: none;
+    float: left;
+    margin: 0;
+    padding: 0;
+
+    li {
+      float: left;
+      padding: 4px 10px;
+    }
+  }
+
+  a {
+    color: #f3f7cc;
+  }
+
+  a:hover {
+    color: #fff;
+  }
+
+  .user {
+    float: right;
+    padding-top: 4px;
+  }
+}
