@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
+from django.http import HttpResponse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.views.decorators.http import require_POST
 
 from bookmarks.common.decorators import ajax_required
@@ -29,6 +31,30 @@ def image_create(request):
         context={'section': 'images',
                  'form': form}
     )
+
+
+@login_required
+def image_list(request):
+    images = Image.objects.all()
+    paginator = Paginator(object_list=images,
+                          per_page=8)
+    page = request.GET.get('page')
+    try:
+        images = paginator.page(page)
+    except PageNotAnInteger:
+        images = paginator.page(1)
+    except EmptyPage:
+        if request.is_ajax():
+            return HttpResponse('')
+        images = paginator.page(paginator.num_pages)
+    if request.is_ajax():
+        return render(request,
+                      template_name='images/image/list_ajax.html',
+                      context={'section': 'images', 'images': images})
+
+    return render(request,
+                  template_name='images/image/list.html',
+                  context={'section': 'images', 'images': images})
 
 
 def image_detail(request, _id, slug):
