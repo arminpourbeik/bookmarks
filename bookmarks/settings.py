@@ -127,3 +127,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+from django.urls import reverse_lazy
+# Django adds a get_absolute_url() method dynamically to any models that appear
+# in the ABSOLUTE_URL_OVERRIDES setting.
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda u: reverse_lazy('user_detail', args=[u.username])
+}
+
+# any difficulty generating thumbnails? set to true
+# THUMBNAIL_DEBUG = True
