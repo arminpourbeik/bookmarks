@@ -27,11 +27,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Local apps
-    'images.apps.ImagesConfig',
     # 3rd party
     'django_extensions',
     'easy_thumbnails',
+    # Local apps
+    'images.apps.ImagesConfig',
+    'actions.apps.ActionsConfig',
 ]
 
 MIDDLEWARE = [

@@ -3,28 +3,38 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+
 from bookmarks.common.decorators import ajax_required
 from django.contrib.auth.models import User
 
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
-from .models import Contact
+from .models import Contact, Profile
+from actions.models import Action
+from actions.utils import create_action
 
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            new_user = form.save(commit=False)
-            new_user.set_password(form.cleaned_data['password'])
+        user_form = UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(
+                user_form.cleaned_data['password'])
+            # Save the User object
             new_user.save()
+            # Create the user profile
+            Profile.objects.create(user=new_user)
+            create_action(user=new_user, verb='has created an account')
             return render(request,
-                          template_name='account/register_done.html',
-                          context={'new_user': new_user, })
+                          'account/register_done.html',
+                          {'new_user': new_user})
     else:
-        form = UserRegistrationForm()
-        return render(request,
-                      template_name='account/register.html',
-                      context={'form': form, })
+        user_form = UserRegistrationForm()
+    return render(request,
+                  'account/register.html',
+                  {'user_form': user_form})
 
 
 @login_required
@@ -51,10 +61,21 @@ def edit(request):
 
 @login_required
 def dashboard(request):
+    # Display all actions by default
+    actions = Action.objects.exclude(user=request.user)
+    following_ids = request.user.following.values_list('id', flat=True)
+
+    if following_ids:
+        # If user is following others, retrieve only their actions
+        actions = actions.filter(user_id__in=following_ids)
+    # actions = actions[:10]
+    actions = actions.select_related('user', 'user__profile')[:10]
+
     return render(
         request,
         template_name='account/dashboard.html',
-        context={'section': 'dashboard'}
+        context={'section': 'dashboard',
+                 'actions': actions, }
     )
 
 
@@ -88,6 +109,7 @@ def user_follow(request):
                     user_from=request.user,
                     user_to=user
                 )
+                create_action(user=request.user, verb='is following', target=user)
             else:
                 Contact.objects.filter(user_from=request.user, user_to=user).delete()
             return JsonResponse({'status': 'ok'})
