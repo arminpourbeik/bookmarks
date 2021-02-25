@@ -28,8 +28,8 @@ def register(request):
             Profile.objects.create(user=new_user)
             create_action(user=new_user, verb='has created an account')
             return render(request,
-                          'account/register_done.html',
-                          {'new_user': new_user})
+                          template_name='account/register_done.html',
+                          context={'new_user': new_user})
     else:
         user_form = UserRegistrationForm()
     return render(request,
@@ -68,8 +68,7 @@ def dashboard(request):
     if following_ids:
         # If user is following others, retrieve only their actions
         actions = actions.filter(user_id__in=following_ids)
-    # actions = actions[:10]
-    actions = actions.select_related('user', 'user__profile')[:10]
+    actions = actions.select_related('user', 'user__profile').prefetch_related('target')[:10]
 
     return render(
         request,
